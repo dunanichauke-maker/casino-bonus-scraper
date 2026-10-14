@@ -104,7 +104,7 @@ The public site is live at https://dunanichauke-maker.github.io/casino-bonus-scr
 
 - This is intentionally a small proof-of-concept, not a production-grade scraper platform.
 - Some casinos on the public source mention bonus examples without explicit wagering or minimum-deposit figures, so those fields are reported as `null` rather than guessed.
-- The actual LLM extraction runs only when an API key is configured.
+- Local Ollama extraction runs without an API key; OpenAI extraction requires an API key.
 
 ## Verification performed
 
