@@ -98,7 +98,7 @@ This produces a static build in `frontend/dist/frontend/browser`.
 
 The workflow at `.github/workflows/deploy-pages.yml` builds the Angular app and deploys it to the free GitHub Pages hosting service when code is pushed to `main` or `master`. In the repository settings, set **Pages > Build and deployment > Source** to **GitHub Actions**. The expected URL is `https://<github-username>.github.io/casino-bonus-scraper/`.
 
-This workspace has not been pushed to GitHub, so no live URL is available yet. The workflow will publish the site after the repository is created, pushed, and Pages is enabled.
+The public site is live at https://dunanichauke-maker.github.io/casino-bonus-scraper/. The latest GitHub Actions deployment completed successfully.
 
 ## Known limitations
 
