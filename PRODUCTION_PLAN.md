@@ -6,4 +6,4 @@ I would schedule the job for 02:00 UTC daily. It would fetch casino pages polite
 
 PostgreSQL would use automated backups with 14-day retention and point-in-time restore; I would test a restore regularly. I would register the domain through a registrar, manage DNS in Azure DNS, point the site and API subdomains to their Azure endpoints, and use managed TLS certificates so all traffic is HTTPS.
 
-For one region, modest database capacity, daily runs, monitoring, and low-volume model calls, I would budget roughly **$80-$200 per month**. The actual amount depends on region, database availability settings, retained history, and model usage; I would confirm it with the Azure pricing calculator before launch.
+For a single Azure region, modest database capacity, daily runs, monitoring, and low-volume model calls, I would budget roughly **$80-$200 per month**. The actual amount depends on region, database availability settings, retained history, and model usage; I would confirm it with the Azure pricing calculator before launch.
