@@ -102,6 +102,7 @@ The public site is live at https://dunanichauke-maker.github.io/casino-bonus-scr
 
 ## Known limitations
 
+- Time spent on the assessment: approximately 2 hours 45 minutes.
 - This is intentionally a small proof-of-concept, not a production-grade scraper platform.
 - Some casinos on the public source mention bonus examples without explicit wagering or minimum-deposit figures, so those fields are reported as `null` rather than guessed.
 - Local Ollama extraction runs without an API key; OpenAI extraction requires an API key.
@@ -115,4 +116,4 @@ The public site is live at https://dunanichauke-maker.github.io/casino-bonus-scr
 
 ## Local repository status
 
-A local Git repository was initialized in this workspace. No live GitHub URL or deployment URL is claimed because no authenticated remote push was performed here.
+The project is published at https://github.com/dunanichauke-maker/casino-bonus-scraper/ and deployed at https://dunanichauke-maker.github.io/casino-bonus-scraper/.
