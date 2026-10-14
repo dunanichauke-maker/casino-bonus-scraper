@@ -3,8 +3,8 @@ import { Component, OnInit } from '@angular/core';
 interface BonusRecord {
   casino_name: string;
   welcome_bonus: string;
-  wagering_requirement: number | null;
-  minimum_deposit: number | null;
+  wagering_requirement: string | null;
+  minimum_deposit: string | null;
   source_url: string;
   last_updated?: string | null;
 }
@@ -39,14 +39,11 @@ export class AppComponent implements OnInit {
       });
   }
 
-  formatWagering(value: number | null): string {
-    return value === null ? 'Not available' : `${value}x`;
+  formatWagering(value: string | null): string {
+    return value === null ? 'Not available' : value;
   }
 
-  formatDeposit(value: number | null): string {
-    if (value === null) {
-      return 'Not available';
-    }
-    return `$${value.toFixed(2)}`;
+  formatDeposit(value: string | null): string {
+    return value === null ? 'Not available' : value;
   }
 }

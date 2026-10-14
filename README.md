@@ -1,13 +1,13 @@
 # Casino Bonus Scraper and UI
 
-This project builds a small full-stack assessment that scrapes a public bonus source, normalizes the results with a lightweight LLM step when available, writes a JSON file, and renders it in a responsive Angular table.
+This project builds a small full-stack assessment that scrapes three detailed UK welcome-offer pages from one public source, uses an LLM-assisted extraction step, writes a JSON file, and renders it in a responsive Angular table.
 
 ## Overview
 
-- Python scraper: reads a public source page and extracts three casino bonus examples.
+- Python scraper: reads individual Casinobonus.com UK welcome-offer pages for Bet365, Betfair, and Paddy Power.
 - Structured output: saves the data as JSON for the frontend.
 - Angular frontend: reads the JSON and shows a mobile-friendly comparison table.
-- Source used: https://casinobonus.com/
+- Source used: https://casinobonus.com/uk/casino-bonuses/welcome-bonuses/
 
 ## Repository layout
 
@@ -104,12 +104,14 @@ The public site is live at https://dunanichauke-maker.github.io/casino-bonus-scr
 
 - Time spent on the assessment: approximately 2 hours 45 minutes.
 - This is intentionally a small proof-of-concept, not a production-grade scraper platform.
-- Some casinos on the public source mention bonus examples without explicit wagering or minimum-deposit figures, so those fields are reported as `null` rather than guessed.
+- Offers are UK-specific and may change; the source URL for each casino is retained for verification.
+- Betfair specifies a qualifying stake but no wagering multiplier; the scraper labels the stake without converting it into a multiplier.
+- Terms absent from a source page remain `null` rather than being guessed.
 - Local Ollama extraction runs without an API key; OpenAI extraction requires an API key.
 
 ## Verification performed
 
-- Python source was fetched from the selected public source.
+- Three individual UK offer pages from Casinobonus.com were fetched and parsed.
 - Local Ollama (`llama3.2`) completed LLM-assisted extraction for all three records; the JSON records the extraction status.
 - The scraper output JSON was generated successfully in both scraper output and frontend asset locations.
 - Angular production build was run and verified locally.

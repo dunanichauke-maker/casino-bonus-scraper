@@ -1,29 +1,29 @@
 [
   {
-    "casino_name": "LeoVegas",
-    "welcome_bonus": "up to $1,000 + 200 free spins",
-    "wagering_requirement": null,
-    "minimum_deposit": null,
-    "source_url": "https://casinobonus.com/",
-    "last_updated": "2026-10-14T00:00:00",
-    "extraction_status": "llm-assisted extraction (ollama)"
-  },
-  {
     "casino_name": "Bet365",
-    "welcome_bonus": "50 free spins on popular slots",
-    "wagering_requirement": null,
-    "minimum_deposit": null,
-    "source_url": "https://casinobonus.com/",
-    "last_updated": "2026-10-14T00:00:00",
+    "welcome_bonus": "Get 100 Free Spins When You Sign Up at bet365 Casino!",
+    "wagering_requirement": "No wagering requirement (0x); \u00a310 qualifying stake",
+    "minimum_deposit": "\u00a310",
+    "source_url": "https://casinobonus.com/uk/casino-bonuses/welcome-bonuses/bet365",
+    "last_updated": "2026-10-14T18:15:45.372709+00:00",
     "extraction_status": "llm-assisted extraction (ollama)"
   },
   {
-    "casino_name": "PlayOJO",
-    "welcome_bonus": "free spins with no wagering requirements",
-    "wagering_requirement": 0,
-    "minimum_deposit": null,
-    "source_url": "https://casinobonus.com/",
-    "last_updated": "2026-10-14T00:00:00",
+    "casino_name": "Betfair",
+    "welcome_bonus": "Get 50 Free Spins + Deposit \u00a310 to Get 50 More at Betfair!",
+    "wagering_requirement": "\u00a310 qualifying stake; no multiplier stated",
+    "minimum_deposit": "\u00a310",
+    "source_url": "https://casinobonus.com/uk/casino-bonuses/welcome-bonuses/betfair",
+    "last_updated": "2026-10-14T18:15:45.372709+00:00",
+    "extraction_status": "llm-assisted extraction (ollama)"
+  },
+  {
+    "casino_name": "Paddy Power",
+    "welcome_bonus": "Paddy Power Welcome Bonus: 60 Free Spins + 100 Extra Spins",
+    "wagering_requirement": "No wagering requirement (0x)",
+    "minimum_deposit": "\u00a310",
+    "source_url": "https://casinobonus.com/uk/casino-bonuses/welcome-bonuses/paddy-power",
+    "last_updated": "2026-10-14T18:15:45.372709+00:00",
     "extraction_status": "llm-assisted extraction (ollama)"
   }
 ]

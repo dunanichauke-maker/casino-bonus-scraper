@@ -4,7 +4,7 @@ import json
 import os
 import re
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -13,6 +13,20 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 
 SOURCE_URL = "https://casinobonus.com/"
+CASINO_PAGES = [
+    {
+        "casino_name": "Bet365",
+        "source_url": "https://casinobonus.com/uk/casino-bonuses/welcome-bonuses/bet365",
+    },
+    {
+        "casino_name": "Betfair",
+        "source_url": "https://casinobonus.com/uk/casino-bonuses/welcome-bonuses/betfair",
+    },
+    {
+        "casino_name": "Paddy Power",
+        "source_url": "https://casinobonus.com/uk/casino-bonuses/welcome-bonuses/paddy-power",
+    },
+]
 OUTPUT_PATH = Path(__file__).resolve().parent / "output" / "bonuses.json"
 ASSET_OUTPUT_PATH = Path(__file__).resolve().parent.parent / "frontend" / "src" / "assets" / "bonuses.json"
 
@@ -35,62 +49,60 @@ def fetch_page(url: str) -> str:
     return response.text
 
 
-def parse_last_updated(html: str) -> str | None:
-    match = re.search(r"All bonuses verified\s+([A-Za-z]+\s+\d{1,2},\s+\d{4})", html, re.IGNORECASE)
-    if match:
-        date_text = match.group(1)
-        try:
-            return datetime.strptime(date_text, "%B %d, %Y").isoformat()
-        except ValueError:
-            return date_text
-    return None
-
-
-def extract_example_offers(html: str) -> list[dict[str, str]]:
+def extract_offer_details(html: str, casino_name: str) -> dict[str, str]:
     soup = BeautifulSoup(html, "html.parser")
-    lines: list[dict[str, str]] = []
-    for paragraph in soup.select("p"):
-        text = paragraph.get_text(" ", strip=True)
-        if not text or "Example:" not in text:
-            continue
-        if "offers" not in text.lower() and "free spins" not in text.lower():
-            continue
-        match = re.search(
-            r"Example:\s*(?P<casino>[A-Z][A-Za-z0-9 .&'-]+?)\s+(?:offers|offers up to|features|gives|has)\s+(?P<offer>.+)",
-            text,
-            re.IGNORECASE,
-        )
-        if not match:
-            continue
-        casino = match.group("casino").strip()
-        offer = match.group("offer").strip()
-        lines.append({"casino_name": casino, "offer_text": offer})
-    # Keep the source’s real examples in a stable, explicit order.
-    preferred = ["LeoVegas", "Bet365", "PlayOJO"]
-    ordered: list[dict[str, str]] = []
-    for name in preferred:
-        for entry in lines:
-            if entry["casino_name"] == name:
-                ordered.append(entry)
-                break
-    return ordered
+    content = soup.find("main") or soup.body or soup
+    headings = [heading.get_text(" ", strip=True) for heading in content.find_all("h1")]
+    if not headings:
+        raise RuntimeError(f"No offer heading found for {casino_name}.")
+
+    source_text = "\n".join(
+        text
+        for element in content.find_all(["h1", "h2", "h3", "p", "li"])
+        if (text := element.get_text(" ", strip=True))
+    )
+    return {
+        "welcome_bonus": headings[0],
+        "source_text": source_text[:16000],
+    }
 
 
-def extract_wagering(text: str) -> int | None:
-    lower = text.lower()
-    if "no wagering requirements" in lower or "wager-free" in lower:
-        return 0
-    match = re.search(r"(\d+)\s*x\s*(?:wager|wagering)", lower)
-    if match:
-        return int(match.group(1))
+def extract_wagering(text: str) -> str | None:
+    no_wagering = re.search(r"no wagering (?:requirements?|rules)", text, re.IGNORECASE)
+    stake_match = re.search(
+        r"(?:stake|spend|wager)\s+(?:at least\s+)?([£$€]\s?\d[\d,]*(?:\.\d{1,2})?)",
+        text,
+        re.IGNORECASE,
+    )
+    if no_wagering:
+        if stake_match:
+            return f"No wagering requirement (0x); {stake_match.group(1).replace(' ', '')} qualifying stake"
+        return "No wagering requirement (0x)"
+
+    multiplier_match = re.search(
+        r"(\d+(?:\.\d+)?)\s*x\s*(?:wager|wagering|rollover)",
+        text,
+        re.IGNORECASE,
+    )
+    if multiplier_match:
+        return f"{multiplier_match.group(1)}x wagering requirement"
+    if stake_match:
+        return f"{stake_match.group(1).replace(' ', '')} qualifying stake; no multiplier stated"
     return None
 
 
-def extract_minimum_deposit(text: str) -> float | None:
-    match = re.search(r"(?:minimum\s+deposit|min(?:imum)?\s+deposit)\s*(?:is|of)?\s*\$?(\d+(?:,\d{3})*(?:\.\d+)?)", text, re.IGNORECASE)
-    if match:
-        value = match.group(1).replace(",", "")
-        return float(value)
+def extract_minimum_deposit(text: str) -> str | None:
+    amount = r"([£$€]\s?\d[\d,]*(?:\.\d{1,2})?)"
+    patterns = (
+        rf"(?:minimum|min\.?)\s+deposit(?:\s+(?:of|is))?\s*(?:at least\s*)?{amount}",
+        rf"(?:first|qualifying)\s+deposit\s+(?:of\s+)?(?:at least\s*)?{amount}",
+        rf"deposit\s+(?:of\s+)?(?:at least\s*)?{amount}",
+        rf"{amount}\s+deposit",
+    )
+    for pattern in patterns:
+        match = re.search(pattern, text, re.IGNORECASE)
+        if match:
+            return match.group(1).replace(" ", "").rstrip(".,")
     return None
 
 
@@ -99,7 +111,7 @@ def llm_extract_bonus(raw_text: str) -> dict[str, Any] | None:
     messages = [
         {
             "role": "system",
-            "content": "You convert casino bonus text into a valid JSON object. Return only JSON with keys: casino_name, welcome_bonus, wagering_requirement, minimum_deposit, source_url. Use null when the text does not specify a value. Do not invent values. Preserve currency symbols and conditions. Wagering requirement must be a number or null, not a percentage or monetary amount.",
+            "content": "You convert casino bonus source text into a valid JSON object. Return only JSON with keys: casino_name, welcome_bonus, wagering_requirement, minimum_deposit, source_url. Use null when the text does not specify a value. Do not invent values. Preserve exact offer wording and currency symbols. Wagering requirement must be a string that distinguishes a rollover multiplier from a qualifying stake; do not mislabel a stake as a multiplier.",
         },
         {
             "role": "user",
@@ -168,50 +180,42 @@ def validate_record(record: dict[str, Any]) -> dict[str, Any]:
         "extraction_status": record.get("extraction_status") or "verified from source text",
     }
 
-    if validated["wagering_requirement"] is not None:
-        try:
-            validated["wagering_requirement"] = int(validated["wagering_requirement"])
-        except (TypeError, ValueError):
-            validated["wagering_requirement"] = None
-
-    if validated["minimum_deposit"] is not None:
-        try:
-            validated["minimum_deposit"] = float(validated["minimum_deposit"])
-        except (TypeError, ValueError):
-            validated["minimum_deposit"] = None
+    for field in ("wagering_requirement", "minimum_deposit"):
+        if validated[field] is not None:
+            validated[field] = str(validated[field])
 
     return validated
 
 
 def build_output() -> list[dict[str, Any]]:
-    page_html = fetch_page(SOURCE_URL)
-    examples = extract_example_offers(page_html)
-    if not examples:
-        raise RuntimeError("No public bonus examples were found in the source HTML.")
-
     items: list[dict[str, Any]] = []
-    last_updated = parse_last_updated(page_html)
-    for entry in examples:
-        casino_name = entry["casino_name"]
-        offer_text = entry["offer_text"]
+    last_updated = datetime.now(timezone.utc).isoformat()
+    for casino in CASINO_PAGES:
+        casino_name = casino["casino_name"]
+        source_url = casino["source_url"]
+        page_html = fetch_page(source_url)
+        details = extract_offer_details(page_html, casino_name)
+        offer_text = details["welcome_bonus"]
         fallback = {
             "casino_name": casino_name,
             "welcome_bonus": offer_text,
-            "wagering_requirement": extract_wagering(offer_text),
-            "minimum_deposit": extract_minimum_deposit(offer_text),
-            "source_url": SOURCE_URL,
+            "wagering_requirement": extract_wagering(details["source_text"]),
+            "minimum_deposit": extract_minimum_deposit(details["source_text"]),
+            "source_url": source_url,
             "last_updated": last_updated,
-            "extraction_status": "deterministic extraction from public source text",
+            "extraction_status": "deterministic extraction from source page",
         }
 
-        llm_result = llm_extract_bonus(f"Casino: {casino_name}\nBonus text: {offer_text}\nSource: {SOURCE_URL}")
+        llm_result = llm_extract_bonus(
+            f"Casino: {casino_name}\nSource: {source_url}\nOffer and terms:\n{details['source_text']}"
+        )
         if llm_result:
             result = {
                 "casino_name": llm_result.get("casino_name") or casino_name,
                 "welcome_bonus": offer_text,
                 "wagering_requirement": fallback["wagering_requirement"] if fallback["wagering_requirement"] is not None else llm_result.get("wagering_requirement"),
                 "minimum_deposit": fallback["minimum_deposit"] if fallback["minimum_deposit"] is not None else llm_result.get("minimum_deposit"),
-                "source_url": SOURCE_URL,
+                "source_url": source_url,
                 "last_updated": last_updated,
                 "extraction_status": f"llm-assisted extraction ({os.getenv('LLM_PROVIDER', 'openai').strip().lower()})",
             }

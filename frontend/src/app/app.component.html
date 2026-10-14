@@ -6,9 +6,9 @@
     </div>
     <div class="hero">
       <div class="hero-copy">
-        <p class="eyebrow">CASINO BONUS SNAPSHOT <span>·</span> CASINOBONUS.COM</p>
+        <p class="eyebrow">CASINO BONUS SNAPSHOT <span>·</span> UK OFFERS</p>
         <h1>{{ title }}</h1>
-        <p class="hero-summary">A clear look at three welcome offers, gathered from one public source.</p>
+        <p class="hero-summary">Three UK welcome offers, checked against their detailed terms on one public source.</p>
       </div>
       <div class="hero-index" aria-label="Three offers tracked">
         <span>OFFERS</span>
@@ -40,7 +40,7 @@
             <th class="number-heading">NO.</th>
             <th>CASINO</th>
             <th>WELCOME OFFER</th>
-            <th>WAGERING</th>
+            <th>WAGERING TERMS</th>
             <th>MIN. DEPOSIT</th>
             <th class="source-heading">SOURCE</th>
           </tr>
@@ -50,7 +50,7 @@
             <td class="number-cell" data-label="NO.">{{ index + 1 | number:'2.0-0' }}</td>
             <td class="casino-cell" data-label="CASINO">{{ bonus.casino_name }}</td>
             <td class="offer-cell" data-label="WELCOME OFFER">{{ bonus.welcome_bonus || 'Not available' }}</td>
-            <td data-label="WAGERING">
+            <td data-label="WAGERING TERMS">
               <span [class.missing]="bonus.wagering_requirement === null">{{ formatWagering(bonus.wagering_requirement) }}</span>
             </td>
             <td data-label="MIN. DEPOSIT">
@@ -65,7 +65,7 @@
     </div>
 
     <footer class="page-footer">
-      <span>PUBLIC DATA <b>·</b> CASINOBONUS.COM</span>
+      <span>PUBLIC UK DATA <b>·</b> CASINOBONUS.COM</span>
       <span>Offers may change. Check the source for current terms.</span>
     </footer>
   </main>
