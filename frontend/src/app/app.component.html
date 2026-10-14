@@ -1,0 +1,72 @@
+﻿<div class="page-shell">
+  <header class="masthead">
+    <div class="masthead-inner">
+      <div class="wordmark">BONUS <span>/</span> INDEX</div>
+      <div class="live-note"><span class="live-dot"></span> PUBLIC OFFER TRACKER</div>
+    </div>
+    <div class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">CASINO BONUS SNAPSHOT <span>·</span> CASINOBONUS.COM</p>
+        <h1>{{ title }}</h1>
+        <p class="hero-summary">A clear look at three welcome offers, gathered from one public source.</p>
+      </div>
+      <div class="hero-index" aria-label="Three offers tracked">
+        <span>OFFERS</span>
+        <strong>03</strong>
+        <span>IN THIS EDITION</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="section-heading">
+      <div>
+        <p class="section-kicker">01 <span>/</span> THE SHORTLIST</p>
+        <h2>Welcome offers</h2>
+      </div>
+      <p class="updated" *ngIf="bonuses.length && bonuses[0].last_updated">
+        <span>LAST CHECKED</span>
+        <time>{{ bonuses[0].last_updated | date:'mediumDate' }}</time>
+      </p>
+    </div>
+
+    <div *ngIf="loading" class="status" role="status">Loading bonus data...</div>
+    <div *ngIf="error" class="status error" role="alert">{{ error }}</div>
+
+    <div *ngIf="!loading && !error" class="table-wrap">
+      <table aria-label="Casino welcome bonus comparison">
+        <thead>
+          <tr>
+            <th class="number-heading">NO.</th>
+            <th>CASINO</th>
+            <th>WELCOME OFFER</th>
+            <th>WAGERING</th>
+            <th>MIN. DEPOSIT</th>
+            <th class="source-heading">SOURCE</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let bonus of bonuses; let index = index">
+            <td class="number-cell" data-label="NO.">{{ index + 1 | number:'2.0-0' }}</td>
+            <td class="casino-cell" data-label="CASINO">{{ bonus.casino_name }}</td>
+            <td class="offer-cell" data-label="WELCOME OFFER">{{ bonus.welcome_bonus || 'Not available' }}</td>
+            <td data-label="WAGERING">
+              <span [class.missing]="bonus.wagering_requirement === null">{{ formatWagering(bonus.wagering_requirement) }}</span>
+            </td>
+            <td data-label="MIN. DEPOSIT">
+              <span [class.missing]="bonus.minimum_deposit === null">{{ formatDeposit(bonus.minimum_deposit) }}</span>
+            </td>
+            <td class="source-cell" data-label="SOURCE">
+              <a [href]="bonus.source_url" target="_blank" rel="noreferrer noopener">View source <span aria-hidden="true">↗</span></a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <footer class="page-footer">
+      <span>PUBLIC DATA <b>·</b> CASINOBONUS.COM</span>
+      <span>Offers may change. Check the source for current terms.</span>
+    </footer>
+  </main>
+</div>

@@ -1,0 +1,29 @@
+[
+  {
+    "casino_name": "LeoVegas",
+    "welcome_bonus": "up to $1,000 + 200 free spins",
+    "wagering_requirement": null,
+    "minimum_deposit": null,
+    "source_url": "https://casinobonus.com/",
+    "last_updated": "2026-10-14T00:00:00",
+    "extraction_status": "llm-assisted extraction (ollama)"
+  },
+  {
+    "casino_name": "Bet365",
+    "welcome_bonus": "50 free spins on popular slots",
+    "wagering_requirement": null,
+    "minimum_deposit": null,
+    "source_url": "https://casinobonus.com/",
+    "last_updated": "2026-10-14T00:00:00",
+    "extraction_status": "llm-assisted extraction (ollama)"
+  },
+  {
+    "casino_name": "PlayOJO",
+    "welcome_bonus": "free spins with no wagering requirements",
+    "wagering_requirement": 0,
+    "minimum_deposit": null,
+    "source_url": "https://casinobonus.com/",
+    "last_updated": "2026-10-14T00:00:00",
+    "extraction_status": "llm-assisted extraction (ollama)"
+  }
+]
