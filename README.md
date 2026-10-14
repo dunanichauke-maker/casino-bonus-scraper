@@ -17,6 +17,7 @@ This project builds a small full-stack assessment that scrapes three detailed UK
 - `frontend/` — Angular app that displays the scraped data.
 - `README.md` — setup and usage guide.
 - `PRODUCTION_PLAN.md` — production architecture plan.
+- `PRODUCTION_PLAN.docx` — Word version of the written assessment section.
 - `AI_USAGE.md` — five-line AI disclosure.
 
 ## Prerequisites
