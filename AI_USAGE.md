@@ -1,5 +1,5 @@
-AI tools used: GitHub Copilot for coding assistance and Ollama Llama 3.2 for local bonus-text extraction.
-GitHub Copilot assisted with the scraper structure, extraction parsing, Angular data binding, and documentation.
-Ollama processed the public bonus examples and returned structured fields; the scraper records which extraction path was used.
-Deterministic parsing preserves source wording and recognized wagering values when those are clearer than the model output.
-The source was changed to casinobonus.com after initial candidate pages returned 403 or 404 responses.
+Tools used: GitHub Copilot for coding and Ollama Llama 3.2 for bonus-text extraction.
+Copilot helped with the Python scraper, Angular UI, tests, and documentation.
+Ollama converted public offer text into structured fields for the generated JSON.
+In an early run, Ollama shortened PlayOJO's offer and missed its no-wagering term; I caught this by comparing the JSON with the source page.
+I changed the merge to preserve source wording and deterministic facts, then added tests for that behavior.
